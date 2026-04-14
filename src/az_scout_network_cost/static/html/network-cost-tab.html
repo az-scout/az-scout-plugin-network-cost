@@ -1,0 +1,132 @@
+<!-- VNet Peering Cost Estimator — plugin HTML fragment -->
+<div class="network-cost-card">
+    <div class="nc-header">
+        <h6><i class="bi bi-diagram-3"></i> VNet Peering Cost Estimator</h6>
+        <p class="text-body-secondary small mb-0">
+            Estimate Azure VNet peering costs to evaluate multi-region architectures.
+            Global peering is predictable — the real challenge is design, not cost.
+        </p>
+    </div>
+
+    <!-- Input form -->
+    <div class="nc-form">
+        <div class="nc-form-row">
+            <div class="nc-field">
+                <label for="nc-source-region" class="form-label form-label-sm">Source region</label>
+                <select class="form-select form-select-sm" id="nc-source-region">
+                    <option value="">— select —</option>
+                </select>
+            </div>
+            <div class="nc-field">
+                <label for="nc-target-region" class="form-label form-label-sm">Target region</label>
+                <select class="form-select form-select-sm" id="nc-target-region">
+                    <option value="">— select —</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="nc-form-row">
+            <div class="nc-field">
+                <label for="nc-traffic-ab" class="form-label form-label-sm">
+                    Traffic A → B <span class="text-body-secondary">(TB/month)</span>
+                </label>
+                <input type="number" class="form-control form-control-sm" id="nc-traffic-ab"
+                       value="1" min="0" step="0.1" />
+            </div>
+            <div class="nc-field">
+                <label for="nc-traffic-ba" class="form-label form-label-sm">
+                    Traffic B → A <span class="text-body-secondary">(TB/month)</span>
+                </label>
+                <input type="number" class="form-control form-control-sm" id="nc-traffic-ba"
+                       value="1" min="0" step="0.1" />
+            </div>
+        </div>
+
+        <div class="nc-form-row">
+            <div class="nc-field">
+                <label for="nc-scenario" class="form-label form-label-sm">Scenario</label>
+                <select class="form-select form-select-sm" id="nc-scenario">
+                    <option value="global">Global VNet peering (cross-region)</option>
+                    <option value="same-region">Same-region VNet peering</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-sm" id="nc-estimate-btn">
+            <i class="bi bi-calculator"></i> Estimate Cost
+        </button>
+    </div>
+
+    <!-- Results -->
+    <div class="nc-results" id="nc-results" style="display:none;">
+        <!-- Summary cards -->
+        <div class="nc-summary">
+            <div class="nc-metric-card nc-metric-primary">
+                <div class="nc-metric-label">Monthly cost</div>
+                <div class="nc-metric-value" id="nc-monthly">—</div>
+            </div>
+            <div class="nc-metric-card">
+                <div class="nc-metric-label">Annual cost</div>
+                <div class="nc-metric-value" id="nc-annual">—</div>
+            </div>
+            <div class="nc-metric-card">
+                <div class="nc-metric-label">Cost per TB</div>
+                <div class="nc-metric-value" id="nc-per-tb">—</div>
+            </div>
+        </div>
+
+        <!-- Delta comparison -->
+        <div class="nc-delta" id="nc-delta" style="display:none;">
+            <div class="nc-delta-header">
+                <i class="bi bi-arrow-left-right"></i> Same-region vs. global peering
+            </div>
+            <div class="nc-delta-body">
+                <div class="nc-delta-item">
+                    <span class="nc-delta-label">Same-region peering</span>
+                    <span class="nc-delta-value" id="nc-delta-same">—</span>
+                </div>
+                <div class="nc-delta-item">
+                    <span class="nc-delta-label">Global peering</span>
+                    <span class="nc-delta-value" id="nc-delta-global">—</span>
+                </div>
+                <div class="nc-delta-item nc-delta-diff">
+                    <span class="nc-delta-label">Difference</span>
+                    <span class="nc-delta-value" id="nc-delta-diff">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Breakdown table -->
+        <div class="nc-breakdown">
+            <h6 class="nc-section-title">Per-direction breakdown</h6>
+            <table class="table table-sm nc-table">
+                <thead>
+                    <tr>
+                        <th>Direction</th>
+                        <th class="text-end">Traffic</th>
+                        <th class="text-end">Outbound</th>
+                        <th class="text-end">Inbound</th>
+                        <th class="text-end">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody id="nc-breakdown-body"></tbody>
+            </table>
+        </div>
+
+        <!-- Pricing info -->
+        <div class="nc-pricing-info" id="nc-pricing-info">
+            <div class="nc-info-badge" id="nc-model-badge">—</div>
+            <div class="nc-info-badge" id="nc-zones-badge">—</div>
+            <div class="nc-info-badge" id="nc-source-badge">—</div>
+        </div>
+
+        <!-- Interpretation -->
+        <div class="nc-interpretation" id="nc-interpretation"></div>
+
+        <!-- Notes -->
+        <div class="nc-notes" id="nc-notes"></div>
+    </div>
+
+    <!-- Error output -->
+    <div class="nc-error" id="nc-error" style="display:none;"></div>
+</div>

@@ -128,9 +128,7 @@ class BillingRegionSummary(BaseModel):
 class BillingAnalysisResponse(BaseModel):
     """Output of the billing CSV analysis endpoint."""
 
-    total_network_cost: float = Field(
-        ..., description="Total network-related billed cost"
-    )
+    total_network_cost: float = Field(..., description="Total network-related billed cost")
     peering_related_cost: float = Field(
         ..., description="Estimated peering-related subset of network cost"
     )
@@ -176,12 +174,8 @@ class TrafficAnalysisResponse(BaseModel):
     pair_count: int
     top_pairs: list[TrafficPairSummary]
     all_pairs: list[TrafficPairSummary]
-    dominant_pair: str = Field(
-        "", description="Region pair with highest traffic volume"
-    )
-    dominant_direction: str = Field(
-        "", description="Highest traffic direction label"
-    )
+    dominant_pair: str = Field("", description="Region pair with highest traffic volume")
+    dominant_direction: str = Field("", description="Highest traffic direction label")
     notes: list[str]
     pricing_source: str = "hardcoded-fallback"
     caveats: list[str] = Field(

@@ -46,31 +46,59 @@ logger = logging.getLogger(__name__)
 # Possible column names for key fields in billing CSVs (case-insensitive).
 # Both EA and MCA/MPA formats are supported, plus pivot-table style headers.
 _COST_COLUMNS = {
-    "costinbillingcurrency", "cost", "pretaxcost", "billingcost",
-    "extendedcost", "totalcost", "effectiveprice",
-    "sum of cost", "sum of pretaxcost", "sum of costinbillingcurrency",
+    "costinbillingcurrency",
+    "cost",
+    "pretaxcost",
+    "billingcost",
+    "extendedcost",
+    "totalcost",
+    "effectiveprice",
+    "sum of cost",
+    "sum of pretaxcost",
+    "sum of costinbillingcurrency",
 }
 _METER_CATEGORY_COLUMNS = {
-    "metercategory", "meter category", "servicename", "service name",
-    "consumedservice", "consumed service",
+    "metercategory",
+    "meter category",
+    "servicename",
+    "service name",
+    "consumedservice",
+    "consumed service",
 }
 _METER_SUBCATEGORY_COLUMNS = {
-    "metersubcategory", "meter sub-category", "meter subcategory",
+    "metersubcategory",
+    "meter sub-category",
+    "meter subcategory",
     "metersub-category",
 }
 _METER_NAME_COLUMNS = {
-    "metername", "meter name", "meter",
+    "metername",
+    "meter name",
+    "meter",
 }
 _REGION_COLUMNS = {
-    "resourcelocation", "resource location", "region", "location",
-    "meterlocation", "meter location", "meterregion", "meter region",
+    "resourcelocation",
+    "resource location",
+    "region",
+    "location",
+    "meterlocation",
+    "meter location",
+    "meterregion",
+    "meter region",
 }
 _USAGE_COLUMNS = {
-    "quantity", "usagequantity", "usage quantity", "consumedquantity",
-    "count of resourceid", "sum of quantity", "sum of usagequantity",
+    "quantity",
+    "usagequantity",
+    "usage quantity",
+    "consumedquantity",
+    "count of resourceid",
+    "sum of quantity",
+    "sum of usagequantity",
 }
 _UNIT_COLUMNS = {
-    "unitofmeasure", "unit of measure", "unit",
+    "unitofmeasure",
+    "unit of measure",
+    "unit",
 }
 
 
@@ -134,15 +162,28 @@ def _parse_number(raw: str | None) -> float | None:
 # ---------------------------------------------------------------------------
 
 _NETWORK_CATEGORIES = {
-    "virtual network", "bandwidth", "networking", "network watcher",
-    "azure dns", "load balancer", "vpn gateway", "expressroute",
-    "application gateway", "traffic manager", "azure firewall",
-    "private link", "nat gateway",
+    "virtual network",
+    "bandwidth",
+    "networking",
+    "network watcher",
+    "azure dns",
+    "load balancer",
+    "vpn gateway",
+    "expressroute",
+    "application gateway",
+    "traffic manager",
+    "azure firewall",
+    "private link",
+    "nat gateway",
 }
 
 _PEERING_KEYWORDS = {
-    "peering", "vnet peering", "inter-region", "intra-region",
-    "virtual network peering", "global vnet peering",
+    "peering",
+    "vnet peering",
+    "inter-region",
+    "intra-region",
+    "virtual network peering",
+    "global vnet peering",
 }
 
 
@@ -158,9 +199,8 @@ def _is_peering_row(category: str, subcategory: str, meter_name: str) -> bool:
     if any(kw in combined for kw in _PEERING_KEYWORDS):
         return True
     # "Virtual Network" category with Ingress/Egress meters
-    return (
-        "virtual network" in category.lower()
-        and any(kw in meter_name.lower() for kw in ("ingress", "egress"))
+    return "virtual network" in category.lower() and any(
+        kw in meter_name.lower() for kw in ("ingress", "egress")
     )
 
 
@@ -484,13 +524,9 @@ def parse_traffic_csv(content: str) -> TrafficAnalysisResponse:
         f"Total observed traffic: {total_traffic:,.1f} GB.",
     ]
 
-    unknown_regions = [
-        p for p in all_pairs if not p.is_same_region and p.rate_per_gb == 0
-    ]
+    unknown_regions = [p for p in all_pairs if not p.is_same_region and p.rate_per_gb == 0]
     if unknown_regions:
-        names = ", ".join(
-            f"{p.source_region}→{p.target_region}" for p in unknown_regions[:3]
-        )
+        names = ", ".join(f"{p.source_region}→{p.target_region}" for p in unknown_regions[:3])
         notes.append(
             f"⚠ {len(unknown_regions)} pair(s) contain unknown regions "
             f"(cost not estimated): {names}"

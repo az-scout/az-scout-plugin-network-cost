@@ -202,9 +202,7 @@ def generate_billing_insights(billing: BillingAnalysisResponse) -> InsightsRespo
                     icon="warning" if conc > 80 else "info",
                     title="Cost concentration",
                     value=_fmt_pct(conc),
-                    description=(
-                        f"Top 2 regions account for {_fmt_pct(conc)} of network cost."
-                    ),
+                    description=(f"Top 2 regions account for {_fmt_pct(conc)} of network cost."),
                 )
             )
 
@@ -300,8 +298,7 @@ def generate_traffic_insights(traffic: TrafficAnalysisResponse) -> InsightsRespo
                 title="Traffic split",
                 value=f"{cross_region_gb:,.0f} GB cross-region",
                 description=(
-                    f"{same_region_gb:,.0f} GB same-region, "
-                    f"{cross_region_gb:,.0f} GB cross-region."
+                    f"{same_region_gb:,.0f} GB same-region, {cross_region_gb:,.0f} GB cross-region."
                 ),
             )
         )

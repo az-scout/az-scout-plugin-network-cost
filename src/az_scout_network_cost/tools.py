@@ -44,6 +44,7 @@ def estimate_peering_cost(
             traffic_ab_gb=traffic_ab_gb,
             traffic_ba_gb=traffic_ba_gb,
             same_region=same_region,
+            currency="USD",
         )
         result = estimate(req)
         return result.model_dump()

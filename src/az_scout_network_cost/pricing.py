@@ -20,6 +20,7 @@ from az_scout_network_cost.models import (
     DirectionBreakdown,
     EstimateRequest,
     EstimateResponse,
+    PricingModelName,
 )
 from az_scout_network_cost.price_fetcher import (
     RegionPricing,
@@ -92,6 +93,7 @@ def estimate(req: EstimateRequest) -> EstimateResponse:
 
     notes: list[str] = []
 
+    pricing_model: PricingModelName
     if req.same_region:
         pricing_model = "same-region-vnet-peering"
         intra_in, intra_out = get_intra_region_rates()

@@ -18,6 +18,7 @@ from __future__ import annotations
 import csv
 import io
 import logging
+import re
 from collections import defaultdict
 from typing import Any
 
@@ -92,8 +93,6 @@ def _find_column(headers: list[str], candidates: set[str]) -> str | None:
     return None
 
 
-import re
-
 # Regex to strip currency symbols, spaces, and thousands separators
 _CURRENCY_RE = re.compile(r"[€$£¥₹\s\u00a0]")
 
@@ -123,10 +122,7 @@ def _parse_number(raw: str | None) -> float | None:
         # Could be EU decimal "0,21" or US thousands "1,000"
         # If single comma with ≤2 digits after → decimal
         parts = s.split(",")
-        if len(parts) == 2 and len(parts[1]) <= 2:
-            s = s.replace(",", ".")
-        else:
-            s = s.replace(",", "")
+        s = s.replace(",", ".") if len(parts) == 2 and len(parts[1]) <= 2 else s.replace(",", "")
     try:
         return float(s)
     except ValueError:
@@ -162,10 +158,10 @@ def _is_peering_row(category: str, subcategory: str, meter_name: str) -> bool:
     if any(kw in combined for kw in _PEERING_KEYWORDS):
         return True
     # "Virtual Network" category with Ingress/Egress meters
-    if "virtual network" in category.lower():
-        if any(kw in meter_name.lower() for kw in ("ingress", "egress")):
-            return True
-    return False
+    return (
+        "virtual network" in category.lower()
+        and any(kw in meter_name.lower() for kw in ("ingress", "egress"))
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -389,7 +385,6 @@ def parse_traffic_csv(content: str) -> TrafficAnalysisResponse:
     src_col = header_map["source_region"]
     tgt_col = header_map["target_region"]
     gb_col = header_map["traffic_gb"]
-    dir_col = header_map.get("direction")
 
     # Aggregate by region pair
     pair_agg: dict[tuple[str, str], float] = defaultdict(float)

@@ -23,11 +23,8 @@ from az_scout_network_cost.insights import (
 )
 from az_scout_network_cost.models import (
     RATE_TO_ZONE,
-    BillingAnalysisResponse,
     EstimateRequest,
     EstimateResponse,
-    InsightsResponse,
-    TrafficAnalysisResponse,
 )
 from az_scout_network_cost.parsers import parse_billing_csv, parse_traffic_csv
 from az_scout_network_cost.price_fetcher import get_known_regions, get_pricing_source
@@ -84,7 +81,7 @@ async def estimate_with_insights(req: EstimateRequest) -> dict[str, Any]:
 
 @router.post("/v1/analyze-billing")
 async def analyze_billing(
-    usage_file: UploadFile = File(..., description="Azure billing usage CSV file"),
+    usage_file: UploadFile = File(..., description="Azure billing usage CSV file"),  # noqa: B008
 ) -> dict[str, Any]:
     """Analyse an Azure billing CSV export for network-related costs.
 
@@ -109,7 +106,7 @@ async def analyze_billing(
 
 @router.post("/v1/analyze-traffic")
 async def analyze_traffic(
-    traffic_file: UploadFile = File(..., description="Traffic summary CSV file"),
+    traffic_file: UploadFile = File(..., description="Traffic summary CSV file"),  # noqa: B008
 ) -> dict[str, Any]:
     """Analyse a traffic CSV export to estimate VNet peering costs.
 

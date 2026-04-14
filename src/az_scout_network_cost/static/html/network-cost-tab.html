@@ -1,132 +1,575 @@
-<!-- VNet Peering Cost Estimator — plugin HTML fragment -->
-<div class="network-cost-card">
-    <div class="nc-header">
-        <h6><i class="bi bi-diagram-3"></i> VNet Peering Cost Estimator</h6>
-        <p class="text-body-secondary small mb-0">
-            Estimate Azure VNet peering costs to evaluate multi-region architectures.
-            Global peering is predictable — the real challenge is design, not cost.
-        </p>
+<!-- VNet Peering Cost Analyser — 3-step guided workflow -->
+<div class="nc-container">
+
+  <!-- ================================================================ -->
+  <!-- Stepper bar                                                       -->
+  <!-- ================================================================ -->
+  <div class="nc-stepper">
+    <div class="nc-step nc-step-active" data-step="1">
+      <div class="nc-step-number">1</div>
+      <div class="nc-step-label">Prerequisites</div>
+    </div>
+    <div class="nc-step-connector"></div>
+    <div class="nc-step" data-step="2">
+      <div class="nc-step-number">2</div>
+      <div class="nc-step-label">Usage Analysis</div>
+    </div>
+    <div class="nc-step-connector"></div>
+    <div class="nc-step" data-step="3">
+      <div class="nc-step-number">3</div>
+      <div class="nc-step-label">Region Comparison</div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- STEP 1 — Prerequisites / Mode Selection                          -->
+  <!-- ================================================================ -->
+  <div class="nc-panel" id="nc-step-1">
+    <h5 class="nc-panel-title"><i class="bi bi-diagram-3"></i> VNet Peering Cost Analysis</h5>
+    <p class="nc-helper-text">
+      Evaluate Azure VNet peering costs for multi-region architectures. Choose an analysis mode to get started.
+    </p>
+
+    <!-- Mode selection cards -->
+    <div class="nc-mode-cards">
+      <div class="nc-mode-card" data-mode="estimate">
+        <div class="nc-mode-icon"><i class="bi bi-calculator"></i></div>
+        <div class="nc-mode-content">
+          <h6 class="nc-mode-title">Estimate without data</h6>
+          <p class="nc-mode-desc">
+            Simulate Azure VNet peering cost for a target multi-region architecture
+            without importing Azure usage data.
+          </p>
+        </div>
+      </div>
+
+      <div class="nc-mode-card" data-mode="billing">
+        <div class="nc-mode-icon"><i class="bi bi-file-earmark-spreadsheet"></i></div>
+        <div class="nc-mode-content">
+          <h6 class="nc-mode-title">Billing data import</h6>
+          <p class="nc-mode-desc">
+            Upload Azure Cost Management billing export files to analyze actual
+            network-related costs.
+          </p>
+        </div>
+      </div>
+
+      <div class="nc-mode-card" data-mode="traffic">
+        <div class="nc-mode-icon"><i class="bi bi-arrow-left-right"></i></div>
+        <div class="nc-mode-content">
+          <h6 class="nc-mode-title">VNet Flow Logs / traffic import</h6>
+          <p class="nc-mode-desc">
+            Upload exported network traffic data to estimate peering cost
+            from observed traffic flows.
+          </p>
+        </div>
+      </div>
     </div>
 
-    <!-- Input form -->
-    <div class="nc-form">
-        <div class="nc-form-row">
-            <div class="nc-field">
-                <label for="nc-source-region" class="form-label form-label-sm">Source region</label>
-                <select class="form-select form-select-sm" id="nc-source-region">
-                    <option value="">— select —</option>
-                </select>
-            </div>
-            <div class="nc-field">
-                <label for="nc-target-region" class="form-label form-label-sm">Target region</label>
-                <select class="form-select form-select-sm" id="nc-target-region">
-                    <option value="">— select —</option>
-                </select>
-            </div>
+    <!-- ============================================================== -->
+    <!-- Step 1A — Estimate mode prerequisites                           -->
+    <!-- ============================================================== -->
+    <div class="nc-prereq" id="nc-prereq-estimate" style="display:none;">
+      <div class="nc-info-card">
+        <div class="nc-card-header">
+          <span class="nc-badge nc-badge-info">Info</span>
+          <h6>No Azure export required</h6>
         </div>
-
-        <div class="nc-form-row">
-            <div class="nc-field">
-                <label for="nc-traffic-ab" class="form-label form-label-sm">
-                    Traffic A → B <span class="text-body-secondary">(TB/month)</span>
-                </label>
-                <input type="number" class="form-control form-control-sm" id="nc-traffic-ab"
-                       value="1" min="0" step="0.1" />
-            </div>
-            <div class="nc-field">
-                <label for="nc-traffic-ba" class="form-label form-label-sm">
-                    Traffic B → A <span class="text-body-secondary">(TB/month)</span>
-                </label>
-                <input type="number" class="form-control form-control-sm" id="nc-traffic-ba"
-                       value="1" min="0" step="0.1" />
-            </div>
+        <div class="nc-card-body">
+          <ul class="nc-checklist">
+            <li><i class="bi bi-check-circle"></i> This mode uses <strong>public Azure pricing</strong> from the Retail Prices API</li>
+            <li><i class="bi bi-check-circle"></i> Best for <strong>architecture discussions</strong> and early design evaluation</li>
+            <li><i class="bi bi-check-circle"></i> Simulate traffic between <strong>any two Azure regions</strong></li>
+            <li><i class="bi bi-info-circle"></i> Output is an <strong>estimate</strong>, not actual billed cost</li>
+          </ul>
         </div>
-
-        <div class="nc-form-row">
-            <div class="nc-field">
-                <label for="nc-scenario" class="form-label form-label-sm">Scenario</label>
-                <select class="form-select form-select-sm" id="nc-scenario">
-                    <option value="global">Global VNet peering (cross-region)</option>
-                    <option value="same-region">Same-region VNet peering</option>
-                </select>
-            </div>
-        </div>
-
-        <button class="btn btn-primary btn-sm" id="nc-estimate-btn">
-            <i class="bi bi-calculator"></i> Estimate Cost
+      </div>
+      <div class="nc-actions">
+        <button class="nc-btn nc-btn-primary" id="nc-btn-continue-estimate">
+          Continue to estimation <i class="bi bi-arrow-right"></i>
         </button>
+      </div>
     </div>
 
-    <!-- Results -->
-    <div class="nc-results" id="nc-results" style="display:none;">
-        <!-- Summary cards -->
+    <!-- ============================================================== -->
+    <!-- Step 1B — Billing import prerequisites                          -->
+    <!-- ============================================================== -->
+    <div class="nc-prereq" id="nc-prereq-billing" style="display:none;">
+      <p class="nc-helper-text" style="margin-bottom:1rem;">
+        This mode requires <strong>Azure Cost Management + Billing</strong> exports.
+        Data is not real-time and depends on your billing access scope.
+      </p>
+
+      <div class="nc-prereq-grid">
+        <!-- Required: Usage Details -->
+        <div class="nc-info-card">
+          <div class="nc-card-header">
+            <span class="nc-badge nc-badge-required">Required</span>
+            <h6>Usage Details / Cost Export</h6>
+          </div>
+          <div class="nc-card-body">
+            <p class="nc-card-desc">
+              The usage details export contains all billed line items including
+              network-related meters. This is required to analyse actual VNet peering cost.
+            </p>
+
+            <div class="nc-account-tabs">
+              <button class="nc-tab-btn nc-tab-active" data-billing-tab="ea">Enterprise Agreement (EA)</button>
+              <button class="nc-tab-btn" data-billing-tab="mca">MCA / MPA</button>
+            </div>
+
+            <div class="nc-billing-instructions" id="nc-instr-ea">
+              <ol class="nc-steps-list">
+                <li>Sign in to the <a href="https://portal.azure.com/#blade/Microsoft_Azure_CostManagement/Menu/overview" target="_blank" rel="noopener">Azure Portal</a></li>
+                <li>Open <strong>Cost Management + Billing</strong></li>
+                <li>Select your <strong>EA enrollment</strong> billing scope</li>
+                <li>Go to <strong>Usage + charges</strong></li>
+                <li>Select the month and click <strong>Download</strong></li>
+                <li>Choose <strong>Usage Details (Version 2)</strong> CSV format</li>
+              </ol>
+            </div>
+
+            <div class="nc-billing-instructions" id="nc-instr-mca" style="display:none;">
+              <ol class="nc-steps-list">
+                <li>Sign in to the <a href="https://portal.azure.com/#blade/Microsoft_Azure_CostManagement/Menu/overview" target="_blank" rel="noopener">Azure Portal</a></li>
+                <li>Open <strong>Cost Management + Billing</strong></li>
+                <li>Select your <strong>billing profile</strong></li>
+                <li>Go to <strong>Invoices</strong> → select an invoice</li>
+                <li>Click <strong>Download usage and charges</strong></li>
+                <li>Download the <strong>Azure usage and charges</strong> CSV</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Optional: Price Sheet -->
+        <div class="nc-info-card">
+          <div class="nc-card-header">
+            <span class="nc-badge nc-badge-optional">Optional</span>
+            <h6>Price Sheet</h6>
+          </div>
+          <div class="nc-card-body">
+            <p class="nc-card-desc">
+              The price sheet can help understand negotiated prices or meter-level
+              pricing specific to your agreement. Not required for basic analysis.
+            </p>
+            <div class="nc-note-box">
+              <i class="bi bi-info-circle"></i>
+              Available under <strong>Cost Management + Billing → Price Sheet</strong>
+              for EA or MCA billing accounts.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nc-actions">
+        <button class="nc-btn nc-btn-primary" id="nc-btn-continue-billing">
+          Continue to upload <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- Step 1C — Traffic import prerequisites                          -->
+    <!-- ============================================================== -->
+    <div class="nc-prereq" id="nc-prereq-traffic" style="display:none;">
+      <p class="nc-helper-text" style="margin-bottom:1rem;">
+        This mode analyses <strong>traffic volumes</strong>, not direct billed cost.
+        Uploaded traffic data will be mapped to public Azure pricing to estimate peering cost.
+        Useful for identifying high-volume inter-region traffic.
+      </p>
+
+      <div class="nc-prereq-grid">
+        <!-- Required: Traffic export -->
+        <div class="nc-info-card">
+          <div class="nc-card-header">
+            <span class="nc-badge nc-badge-required">Required</span>
+            <h6>Traffic Export</h6>
+          </div>
+          <div class="nc-card-body">
+            <p class="nc-card-desc">
+              Prepare or export a CSV file containing inter-region traffic data.
+              Two formats are supported:
+            </p>
+            <div class="nc-format-list">
+              <div class="nc-format-item">
+                <strong>1. Summarised CSV</strong> (recommended)
+                <p>Columns: <code>source_region</code>, <code>target_region</code>,
+                <code>traffic_gb</code>, and optionally <code>direction</code>.</p>
+              </div>
+              <div class="nc-format-item">
+                <strong>2. Traffic Analytics export</strong>
+                <p>Exported from Azure Traffic Analytics with region-level aggregation.</p>
+              </div>
+            </div>
+            <div class="nc-note-box">
+              <i class="bi bi-exclamation-triangle"></i>
+              Raw NSG flow logs may need preprocessing. For V1, prefer a summarised CSV.
+            </div>
+          </div>
+        </div>
+
+        <!-- Optional: Region mapping -->
+        <div class="nc-info-card">
+          <div class="nc-card-header">
+            <span class="nc-badge nc-badge-optional">Optional</span>
+            <h6>Region Mapping Hints</h6>
+          </div>
+          <div class="nc-card-body">
+            <p class="nc-card-desc">
+              If your traffic data uses custom region identifiers, you can provide
+              a mapping to standard Azure region names. Not needed if standard
+              <code>armRegionName</code> values are used.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="nc-actions">
+        <button class="nc-btn nc-btn-primary" id="nc-btn-continue-traffic">
+          Continue to upload <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- STEP 2 — Usage Analysis                                          -->
+  <!-- ================================================================ -->
+  <div class="nc-panel" id="nc-step-2" style="display:none;">
+
+    <!-- ============================================================== -->
+    <!-- Mode 1 — Estimate form                                          -->
+    <!-- ============================================================== -->
+    <div id="nc-analysis-estimate" style="display:none;">
+      <h5 class="nc-panel-title"><i class="bi bi-calculator"></i> Peering Cost Estimation</h5>
+      <p class="nc-helper-text">
+        Configure traffic parameters to estimate VNet peering cost between two Azure regions.
+      </p>
+
+      <div class="nc-form">
+        <div class="nc-form-row">
+          <div class="nc-field">
+            <label for="nc-source-region" class="form-label form-label-sm">Source region</label>
+            <select class="form-select form-select-sm" id="nc-source-region">
+              <option value="">— select region —</option>
+            </select>
+          </div>
+          <div class="nc-field">
+            <label for="nc-target-region" class="form-label form-label-sm">Target region</label>
+            <select class="form-select form-select-sm" id="nc-target-region">
+              <option value="">— select region —</option>
+            </select>
+          </div>
+        </div>
+        <div class="nc-form-row">
+          <div class="nc-field">
+            <label for="nc-traffic-ab" class="form-label form-label-sm">
+              Traffic A → B <span class="text-body-secondary">(TB/month)</span>
+            </label>
+            <input type="number" class="form-control form-control-sm" id="nc-traffic-ab"
+                   value="1" min="0" step="0.1" />
+          </div>
+          <div class="nc-field">
+            <label for="nc-traffic-ba" class="form-label form-label-sm">
+              Traffic B → A <span class="text-body-secondary">(TB/month)</span>
+            </label>
+            <input type="number" class="form-control form-control-sm" id="nc-traffic-ba"
+                   value="1" min="0" step="0.1" />
+          </div>
+        </div>
+        <div class="nc-form-row">
+          <div class="nc-field">
+            <label for="nc-scenario" class="form-label form-label-sm">Scenario</label>
+            <select class="form-select form-select-sm" id="nc-scenario">
+              <option value="global">Global VNet peering (cross-region)</option>
+              <option value="same-region">Same-region VNet peering</option>
+            </select>
+          </div>
+        </div>
+        <button class="nc-btn nc-btn-primary" id="nc-estimate-btn">
+          <i class="bi bi-calculator"></i> Estimate Cost
+        </button>
+      </div>
+
+      <!-- Estimate results -->
+      <div id="nc-estimate-results" style="display:none;">
         <div class="nc-summary">
-            <div class="nc-metric-card nc-metric-primary">
-                <div class="nc-metric-label">Monthly cost</div>
-                <div class="nc-metric-value" id="nc-monthly">—</div>
-            </div>
-            <div class="nc-metric-card">
-                <div class="nc-metric-label">Annual cost</div>
-                <div class="nc-metric-value" id="nc-annual">—</div>
-            </div>
-            <div class="nc-metric-card">
-                <div class="nc-metric-label">Cost per TB</div>
-                <div class="nc-metric-value" id="nc-per-tb">—</div>
-            </div>
+          <div class="nc-metric-card nc-metric-primary">
+            <div class="nc-metric-label">Monthly cost</div>
+            <div class="nc-metric-value" id="nc-monthly">—</div>
+          </div>
+          <div class="nc-metric-card">
+            <div class="nc-metric-label">Annual cost</div>
+            <div class="nc-metric-value" id="nc-annual">—</div>
+          </div>
+          <div class="nc-metric-card">
+            <div class="nc-metric-label">Cost per TB</div>
+            <div class="nc-metric-value" id="nc-per-tb">—</div>
+          </div>
         </div>
 
         <!-- Delta comparison -->
         <div class="nc-delta" id="nc-delta" style="display:none;">
-            <div class="nc-delta-header">
-                <i class="bi bi-arrow-left-right"></i> Same-region vs. global peering
+          <div class="nc-delta-header">
+            <i class="bi bi-arrow-left-right"></i> Same-region vs. global peering
+          </div>
+          <div class="nc-delta-body">
+            <div class="nc-delta-item">
+              <span class="nc-delta-label">Same-region peering</span>
+              <span class="nc-delta-value" id="nc-delta-same">—</span>
             </div>
-            <div class="nc-delta-body">
-                <div class="nc-delta-item">
-                    <span class="nc-delta-label">Same-region peering</span>
-                    <span class="nc-delta-value" id="nc-delta-same">—</span>
-                </div>
-                <div class="nc-delta-item">
-                    <span class="nc-delta-label">Global peering</span>
-                    <span class="nc-delta-value" id="nc-delta-global">—</span>
-                </div>
-                <div class="nc-delta-item nc-delta-diff">
-                    <span class="nc-delta-label">Difference</span>
-                    <span class="nc-delta-value" id="nc-delta-diff">—</span>
-                </div>
+            <div class="nc-delta-item">
+              <span class="nc-delta-label">Global peering</span>
+              <span class="nc-delta-value" id="nc-delta-global">—</span>
             </div>
+            <div class="nc-delta-item nc-delta-diff">
+              <span class="nc-delta-label">Difference</span>
+              <span class="nc-delta-value" id="nc-delta-diff">—</span>
+            </div>
+          </div>
         </div>
 
         <!-- Breakdown table -->
         <div class="nc-breakdown">
-            <h6 class="nc-section-title">Per-direction breakdown</h6>
-            <table class="table table-sm nc-table">
-                <thead>
-                    <tr>
-                        <th>Direction</th>
-                        <th class="text-end">Traffic</th>
-                        <th class="text-end">Outbound</th>
-                        <th class="text-end">Inbound</th>
-                        <th class="text-end">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody id="nc-breakdown-body"></tbody>
-            </table>
+          <h6 class="nc-section-title">Per-direction breakdown</h6>
+          <table class="table table-sm nc-table">
+            <thead>
+              <tr>
+                <th>Direction</th>
+                <th class="text-end">Traffic</th>
+                <th class="text-end">Outbound</th>
+                <th class="text-end">Inbound</th>
+                <th class="text-end">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="nc-breakdown-body"></tbody>
+          </table>
         </div>
 
-        <!-- Pricing info -->
-        <div class="nc-pricing-info" id="nc-pricing-info">
-            <div class="nc-info-badge" id="nc-model-badge">—</div>
-            <div class="nc-info-badge" id="nc-zones-badge">—</div>
-            <div class="nc-info-badge" id="nc-source-badge">—</div>
+        <!-- Pricing info badges -->
+        <div class="nc-pricing-info">
+          <div class="nc-info-badge" id="nc-model-badge">—</div>
+          <div class="nc-info-badge" id="nc-zones-badge">—</div>
+          <div class="nc-info-badge" id="nc-source-badge">—</div>
         </div>
 
         <!-- Interpretation -->
-        <div class="nc-interpretation" id="nc-interpretation"></div>
+        <div class="nc-interpretation" id="nc-interpretation" style="display:none;"></div>
 
         <!-- Notes -->
         <div class="nc-notes" id="nc-notes"></div>
+      </div>
     </div>
 
-    <!-- Error output -->
-    <div class="nc-error" id="nc-error" style="display:none;"></div>
+    <!-- ============================================================== -->
+    <!-- Mode 2 — Billing upload & results                               -->
+    <!-- ============================================================== -->
+    <div id="nc-analysis-billing" style="display:none;">
+      <h5 class="nc-panel-title"><i class="bi bi-file-earmark-spreadsheet"></i> Billing Data Analysis</h5>
+      <p class="nc-helper-text">
+        Upload your Azure billing export to analyse actual network-related costs.
+      </p>
+
+      <div class="nc-upload-area" id="nc-billing-upload-area">
+        <div class="nc-upload-group">
+          <div class="nc-upload-box">
+            <span class="nc-badge nc-badge-required">Required</span>
+            <label for="nc-billing-file" class="nc-upload-label">
+              <i class="bi bi-cloud-upload"></i>
+              <span>Usage Details CSV</span>
+              <small>Azure Cost Management billing export</small>
+            </label>
+            <input type="file" id="nc-billing-file" accept=".csv" class="nc-file-input" />
+            <div class="nc-file-name" id="nc-billing-file-name"></div>
+          </div>
+          <div class="nc-upload-box">
+            <span class="nc-badge nc-badge-optional">Optional</span>
+            <label for="nc-pricesheet-file" class="nc-upload-label">
+              <i class="bi bi-cloud-upload"></i>
+              <span>Price Sheet CSV</span>
+              <small>Negotiated pricing reference</small>
+            </label>
+            <input type="file" id="nc-pricesheet-file" accept=".csv" class="nc-file-input" />
+            <div class="nc-file-name" id="nc-pricesheet-file-name"></div>
+          </div>
+        </div>
+        <button class="nc-btn nc-btn-primary" id="nc-billing-analyze-btn" disabled>
+          <i class="bi bi-search"></i> Analyse Billing Data
+        </button>
+      </div>
+
+      <!-- Billing results -->
+      <div id="nc-billing-results" style="display:none;">
+        <div class="nc-summary">
+          <div class="nc-metric-card nc-metric-primary">
+            <div class="nc-metric-label">Actual monthly cost</div>
+            <div class="nc-metric-value" id="nc-billing-total">—</div>
+          </div>
+          <div class="nc-metric-card">
+            <div class="nc-metric-label">Billed usage lines</div>
+            <div class="nc-metric-value" id="nc-billing-rows">—</div>
+          </div>
+          <div class="nc-metric-card">
+            <div class="nc-metric-label">Peering-related entries</div>
+            <div class="nc-metric-value" id="nc-billing-peering">—</div>
+          </div>
+          <div class="nc-metric-card">
+            <div class="nc-metric-label">Dominant region</div>
+            <div class="nc-metric-value nc-metric-text" id="nc-billing-region">—</div>
+          </div>
+        </div>
+
+        <!-- Meter breakdown -->
+        <div class="nc-breakdown">
+          <h6 class="nc-section-title">Meter / category breakdown</h6>
+          <table class="table table-sm nc-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Meter</th>
+                <th>Region</th>
+                <th class="text-end">Usage</th>
+                <th class="text-end">Cost</th>
+              </tr>
+            </thead>
+            <tbody id="nc-billing-meter-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Region breakdown -->
+        <div class="nc-breakdown">
+          <h6 class="nc-section-title">Region breakdown</h6>
+          <table class="table table-sm nc-table">
+            <thead>
+              <tr>
+                <th>Region</th>
+                <th class="text-end">Network cost</th>
+                <th class="text-end">Peering cost</th>
+                <th class="text-end">Meters</th>
+              </tr>
+            </thead>
+            <tbody id="nc-billing-region-body"></tbody>
+          </table>
+        </div>
+
+        <div class="nc-caveats" id="nc-billing-caveats"></div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- Mode 3 — Traffic upload & results                               -->
+    <!-- ============================================================== -->
+    <div id="nc-analysis-traffic" style="display:none;">
+      <h5 class="nc-panel-title"><i class="bi bi-arrow-left-right"></i> Traffic Flow Analysis</h5>
+      <p class="nc-helper-text">
+        Upload your traffic summary CSV to estimate peering cost from observed inter-region flows.
+      </p>
+
+      <div class="nc-upload-area" id="nc-traffic-upload-area">
+        <div class="nc-upload-group">
+          <div class="nc-upload-box">
+            <span class="nc-badge nc-badge-required">Required</span>
+            <label for="nc-traffic-file" class="nc-upload-label">
+              <i class="bi bi-cloud-upload"></i>
+              <span>Traffic Summary CSV</span>
+              <small>source_region, target_region, traffic_gb</small>
+            </label>
+            <input type="file" id="nc-traffic-file" accept=".csv" class="nc-file-input" />
+            <div class="nc-file-name" id="nc-traffic-file-name"></div>
+          </div>
+        </div>
+        <button class="nc-btn nc-btn-primary" id="nc-traffic-analyze-btn" disabled>
+          <i class="bi bi-search"></i> Analyse Traffic Data
+        </button>
+      </div>
+
+      <!-- Traffic results -->
+      <div id="nc-traffic-results" style="display:none;">
+        <div class="nc-summary">
+          <div class="nc-metric-card nc-metric-primary">
+            <div class="nc-metric-label">Observed traffic</div>
+            <div class="nc-metric-value" id="nc-traffic-total">—</div>
+          </div>
+          <div class="nc-metric-card nc-metric-primary">
+            <div class="nc-metric-label">Estimated peering cost</div>
+            <div class="nc-metric-value" id="nc-traffic-cost">—</div>
+          </div>
+          <div class="nc-metric-card">
+            <div class="nc-metric-label">Top region pair</div>
+            <div class="nc-metric-value nc-metric-text" id="nc-traffic-top-pair">—</div>
+          </div>
+          <div class="nc-metric-card">
+            <div class="nc-metric-label">Highest traffic direction</div>
+            <div class="nc-metric-value nc-metric-text" id="nc-traffic-direction">—</div>
+          </div>
+        </div>
+
+        <!-- Top pairs table -->
+        <div class="nc-breakdown">
+          <h6 class="nc-section-title">Top region pairs</h6>
+          <table class="table table-sm nc-table">
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>Target</th>
+                <th class="text-end">Traffic (GB)</th>
+                <th class="text-end">Rate ($/GB)</th>
+                <th class="text-end">Est. cost</th>
+              </tr>
+            </thead>
+            <tbody id="nc-traffic-pairs-body"></tbody>
+          </table>
+        </div>
+
+        <div class="nc-caveats" id="nc-traffic-caveats"></div>
+      </div>
+    </div>
+
+    <!-- Step 2 navigation -->
+    <div class="nc-step-nav" id="nc-step2-nav" style="display:none;">
+      <button class="nc-btn nc-btn-ghost" id="nc-btn-back-to-1">
+        <i class="bi bi-arrow-left"></i> Back
+      </button>
+      <button class="nc-btn nc-btn-primary" id="nc-btn-to-step3" disabled>
+        View Insights <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- STEP 3 — Region Comparison / Insights                            -->
+  <!-- ================================================================ -->
+  <div class="nc-panel" id="nc-step-3" style="display:none;">
+    <h5 class="nc-panel-title"><i class="bi bi-lightbulb"></i> Decision Support</h5>
+    <p class="nc-helper-text" id="nc-insights-headline"></p>
+
+    <!-- Insight cards -->
+    <div class="nc-insights-grid" id="nc-insights-grid"></div>
+
+    <!-- Interpretation -->
+    <div class="nc-interpretation nc-interpretation-lg" id="nc-insights-interpretation"></div>
+
+    <!-- Recommendations -->
+    <div class="nc-recommendations" id="nc-insights-recommendations"></div>
+
+    <!-- Step 3 navigation -->
+    <div class="nc-step-nav">
+      <button class="nc-btn nc-btn-ghost" id="nc-btn-back-to-2">
+        <i class="bi bi-arrow-left"></i> Back to Analysis
+      </button>
+      <button class="nc-btn nc-btn-ghost" id="nc-btn-restart">
+        <i class="bi bi-arrow-counterclockwise"></i> Start Over
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading overlay -->
+  <div class="nc-loading" id="nc-loading" style="display:none;">
+    <div class="nc-spinner"></div>
+    <span>Analysing…</span>
+  </div>
+
+  <!-- Error output -->
+  <div class="nc-error" id="nc-error" style="display:none;"></div>
 </div>

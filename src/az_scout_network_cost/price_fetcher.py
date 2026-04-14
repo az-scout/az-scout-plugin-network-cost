@@ -34,7 +34,7 @@ _FILTER = (
     "serviceName eq 'Virtual Network' and currencyCode eq 'USD' and priceType eq 'Consumption'"
 )
 _PAGE_SIZE = 100
-_CACHE_TTL = int(os.environ.get("NETWORK_COST_CACHE_TTL", "3600"))  # 1 hour
+_CACHE_TTL = int(os.environ.get("NETWORK_COST_CACHE_TTL", "86400"))  # 24 hours
 
 # Meters of interest
 _INTRA_INGRESS = "Intra-Region Ingress"

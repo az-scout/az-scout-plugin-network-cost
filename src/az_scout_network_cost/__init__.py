@@ -38,9 +38,13 @@ class NetworkCostPlugin:
 
     def get_mcp_tools(self) -> list[Callable[..., Any]] | None:
         """Return MCP tool functions for AI chat."""
-        from az_scout_network_cost.tools import estimate_peering_cost
+        from az_scout_network_cost.tools import (
+            analyze_billing_network_cost,
+            analyze_traffic_peering_cost,
+            estimate_peering_cost,
+        )
 
-        return [estimate_peering_cost]
+        return [estimate_peering_cost, analyze_billing_network_cost, analyze_traffic_peering_cost]
 
     def get_static_dir(self) -> Path | None:
         """Return path to static assets directory."""
@@ -65,8 +69,11 @@ class NetworkCostPlugin:
     def get_system_prompt_addendum(self) -> str | None:
         """Extra guidance for the default discussion chat mode."""
         return (
-            "You have access to the estimate_peering_cost tool. Use it when "
-            "the user asks about Azure VNet peering costs, multi-region "
+            "You have access to three network cost tools:\n"
+            "- estimate_peering_cost: estimate VNet peering costs between Azure regions\n"
+            "- analyze_billing_network_cost: analyse billing CSV exports for network costs\n"
+            "- analyze_traffic_peering_cost: analyse traffic CSV to estimate peering cost\n\n"
+            "Use them when the user asks about Azure VNet peering costs, multi-region "
             "networking costs, or data-transfer pricing between Azure regions. "
             "Emphasise that global VNet peering cost is predictable and "
             "typically not a blocker for multi-region architectures."

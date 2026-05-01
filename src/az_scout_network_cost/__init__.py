@@ -5,16 +5,17 @@ architectures.  The key insight: global VNet peering cost is
 predictable and typically NOT a blocker for multi-region deployments.
 """
 
+from __future__ import annotations
+
 from collections.abc import Callable
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _pkg_version
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from az_scout.plugin_api import ChatMode, TabDefinition, get_plugin_logger
-from fastapi import APIRouter
-
-logger = get_plugin_logger("network-cost")
+if TYPE_CHECKING:
+    from az_scout.plugin_api import ChatMode, TabDefinition
+    from fastapi import APIRouter
 
 _STATIC_DIR = Path(__file__).parent / "static"
 
@@ -52,6 +53,8 @@ class NetworkCostPlugin:
 
     def get_tabs(self) -> list[TabDefinition] | None:
         """Return UI tab definitions."""
+        from az_scout.plugin_api import TabDefinition
+
         return [
             TabDefinition(
                 id="network-cost",
